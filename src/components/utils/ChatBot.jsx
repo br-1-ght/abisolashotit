@@ -22,23 +22,10 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
   }, [messages]);
 
   const handleServiceNavigation = (category) => {
-    // Close the chatbot first
     setIsOpen(false);
-    
-    // Set the service category
-    if (setServiceCategory) {
-      setServiceCategory(category);
-    }
-    
-    // Navigate to services page
-    if (setCurrentPage) {
-      setCurrentPage('services');
-    }
-    
-    // Scroll to top after a brief delay to ensure page has changed
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
+    if (setServiceCategory) setServiceCategory(category);
+    if (setCurrentPage) setCurrentPage('services');
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
   };
 
   const FAQ_RESPONSES = {
@@ -115,25 +102,15 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
 
   const findBestMatch = (userInput) => {
     const input = userInput.toLowerCase();
-    
-    // Check for greetings
     if (/^(hi|hello|hey|good morning|good afternoon|good evening)/.test(input)) {
       return { text: 'Hello! How can I assist you with AAS Photography today?', hasLink: false };
     }
-
-    // Check for thanks
     if (/thank|thanks|appreciate/.test(input)) {
       return { text: 'You\'re welcome! Is there anything else I can help you with?', hasLink: false };
     }
-
-    // Search through FAQ responses - FIXED THIS PART
-    for (const [key, faq] of Object.entries(FAQ_RESPONSES)) {
-      if (faq.keywords.some(keyword => input.includes(keyword))) {
-        return faq;
-      }
+    for (const faq of Object.values(FAQ_RESPONSES)) {
+      if (faq.keywords.some(keyword => input.includes(keyword))) return faq;
     }
-
-    // Default response for unmatched queries
     return {
       text: 'I\'m not sure about that specific question. For detailed assistance, please contact our customer care team:\n\n📞 +234 810 137 9235\n📧 avisualsaav@gmail.com\n\nThey\'ll be happy to help you!',
       hasLink: false
@@ -143,19 +120,13 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
-    // Add user message
-    const userMessage = {
-      type: 'user',
-      text: inputValue,
-      timestamp: new Date()
-    };
+    const userMessage = { type: 'user', text: inputValue, timestamp: new Date() };
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate bot typing and respond
     setTimeout(() => {
-      const response = findBestMatch(inputValue);
+      const response = findBestMatch(userMessage.text);
       const botResponse = {
         type: 'bot',
         text: response.text || response.response,
@@ -176,13 +147,7 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
     }
   };
 
-  const quickActions = [
-    'Our Services',
-    'Wedding Photography',
-    'Event Photography',
-    'Contact Info'
-  ];
-
+  const quickActions = ['Our Services', 'Wedding Photography', 'Event Photography', 'Contact Info'];
   const handleQuickAction = (action) => {
     setInputValue(action);
     setTimeout(() => handleSendMessage(), 100);
@@ -190,7 +155,6 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
 
   return (
     <>
-      {/* Chat Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -204,50 +168,31 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
         </button>
       )}
 
-      {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden">
-          {/* Header */}
           <div style={{ background: 'linear-gradient(to right, rgba(6, 1, 51, 0.9), rgba(19, 12, 79, 0.9))' }} className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div style={{ background: 'linear-gradient(to right, rgba(6, 1, 51, 0.9), rgba(19, 12, 79, 0.9))' }} className="w-10 h-10 border-2 border-white rounded-full flex items-center justify-center text-white font-bold">
-                AAS
-              </div>
+              <div className="w-10 h-10 border-2 border-white rounded-full flex items-center justify-center text-white font-bold">AAS</div>
               <div>
                 <h3 className="text-white font-semibold">AAS Photography</h3>
                 <p className="text-purple-100 text-xs">Online</p>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors"
-              aria-label="Close chat"
-            >
+            <button onClick={() => setIsOpen(false)} className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors" aria-label="Close chat">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`mb-4 flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    message.type === 'user'
-                      ? 'text-white'
-                      : 'bg-white text-gray-800 shadow-sm border border-gray-200'
-                  }`}
-                  style={message.type === 'user' ? { background: 'linear-gradient(to right, rgba(6, 1, 51, 0.9), rgba(19, 12, 79, 0.9))' } : {}}
-                >
+            {messages.map((message, idx) => (
+              <div key={idx} className={`mb-4 flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${message.type === 'user' ? 'text-white' : 'bg-white text-gray-800 shadow-sm border border-gray-200'}`} style={message.type === 'user' ? { background: 'linear-gradient(to right, rgba(6, 1, 51, 0.9), rgba(19, 12, 79, 0.9))' } : {}}>
                   <p className="text-sm whitespace-pre-line">{message.text}</p>
                   {message.hasLink && message.linkText && (
                     <button
-                      onClick={() => message.action()}
+                      onClick={message.action}
                       style={{ background: 'rgba(6, 1, 51, 0.9)' }}
                       className="mt-2 text-white text-xs px-3 py-1.5 rounded-full hover:opacity-80 transition-all inline-flex items-center gap-1"
                     >
@@ -257,15 +202,13 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
                       </svg>
                     </button>
                   )}
-                  <span className={`text-xs mt-1 block ${
-                    message.type === 'user' ? 'text-gray-200' : 'text-gray-500'
-                  }`}>
+                  <span className={`text-xs mt-1 block ${message.type === 'user' ? 'text-gray-200' : 'text-gray-500'}`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
               </div>
             ))}
-            
+
             {isTyping && (
               <div className="flex justify-start mb-4">
                 <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
@@ -280,13 +223,12 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Actions */}
           <div className="px-4 py-2 border-t border-gray-200 bg-white">
             <p className="text-xs text-gray-500 mb-2">Quick questions:</p>
             <div className="flex flex-wrap gap-2">
-              {quickActions.map((action, index) => (
+              {quickActions.map((action, idx) => (
                 <button
-                  key={index}
+                  key={idx}
                   onClick={() => handleQuickAction(action)}
                   style={{ background: 'rgba(6, 1, 51, 0.1)', color: 'rgba(6, 1, 51, 0.9)' }}
                   className="text-xs px-3 py-1.5 rounded-full hover:opacity-80 transition-colors"
@@ -297,7 +239,6 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
             </div>
           </div>
 
-          {/* Input */}
           <div className="p-4 border-t border-gray-200 bg-white">
             <div className="flex gap-2">
               <input
@@ -308,8 +249,8 @@ const Chatbot = ({ setCurrentPage, setServiceCategory }) => {
                 placeholder="Type your message..."
                 style={{ borderColor: 'rgba(6, 1, 51, 0.3)' }}
                 className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:border-transparent"
-                onFocus={(e) => e.target.style.borderColor = 'rgba(6, 1, 51, 0.9)'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(6, 1, 51, 0.3)'}
+                onFocus={(e) => (e.target.style.borderColor = 'rgba(6, 1, 51, 0.9)')}
+                onBlur={(e) => (e.target.style.borderColor = 'rgba(6, 1, 51, 0.3)')}
                 aria-label="Type your message"
               />
               <button

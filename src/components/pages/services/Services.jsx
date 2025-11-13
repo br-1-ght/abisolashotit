@@ -18,10 +18,10 @@ const ServicesPage = ({ setShowBookingForm, initialCategory, setServiceCategory 
 
   // Reset to "All Services" when search is active
   useEffect(() => {
-    if (searchQuery && selectedCategory !== 'All Services') {
-      setSelectedCategory('All Services');
-    }
-  }, [searchQuery]);
+  if (searchQuery && selectedCategory !== 'All Services') {
+    setSelectedCategory('All Services');
+  }
+}, [searchQuery, selectedCategory]);
 
   // Filter products based on category and search
   const filteredProducts = servicesData.filter(product => {

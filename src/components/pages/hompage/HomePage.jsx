@@ -4,20 +4,19 @@ import './HomePage.css';
 
 const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
   const imageObserverRef = useRef(null);
+
   useEffect(() => {
-    // Intersection Observer for lazy loading
+    // Intersection Observer for lazy loading gallery images
     imageObserverRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const img = entry.target;
             const src = img.dataset.src;
-            
+
             if (src && !img.src) {
               img.src = src;
-              img.classList.add('fade-in');
-              
-              
+              img.onload = () => img.classList.add('fade-in'); // fade in after image loads
               imageObserverRef.current.unobserve(img);
             }
           }
@@ -44,19 +43,19 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
   }, []);
 
   const galleryImages = [
-    { src: "../assets/images/image-1.jpg", alt: "Professional wedding photography in Lagos - Elegant bride portrait", className: "tall" },
-    { src: "../assets/images/DSC_4365.jpg", alt: "Nigerian traditional wedding photography - Couple in traditional attire", className: "" },
-    { src: "../assets/images/DSC_2190do.jpg", alt: "Event photography Lagos - Corporate event coverage", className: "" },
-    { src: "../assets/images/DSC_9639do.jpg", alt: "Portrait photography Lagos - Professional headshots", className: "" },
-    { src: "../assets/images/DSC_5116do.jpg", alt: "Wedding reception photography - Beautiful venue decoration", className: "" },
-    { src: "../assets/images/image-3.jpg", alt: "Outdoor wedding photography Nigeria - Garden wedding ceremony", className: "wide" },
-    { src: "../assets/images/DSC_5084do.jpg", alt: "Lagos wedding photographer - Romantic couple moments", className: "" },
-    { src: "../assets/images/DSC_6898.jpg", alt: "Family portrait photography - Group photo session", className: "" },
-    { src: "../assets/images/DSC_2500AA.jpg", alt: "Birthday event photography Lagos - Celebration moments", className: "" },
-    { src: "../assets/images/DSC_6955.jpg", alt: "Professional photography Lagos - Candid event shots", className: "" },
-    { src: "../assets/images/DSC_7884-copy2.jpg", alt: "Engagement photography Nigeria - Pre-wedding photoshoot", className: "tall" },
-    { src: "../assets/images/DSC_3996do.jpg", alt: "Commercial photography Lagos - Product and business photography", className: "" },
-    { src: "../assets/images/DSC_1945.jpg", alt: "Event videography Lagos - Professional video coverage", className: "" }
+    { src: "/assets/images/image-1.jpg", alt: "Professional wedding photography in Lagos - Elegant bride portrait", className: "tall" },
+    { src: "/assets/images/DSC_4365.jpg", alt: "Nigerian traditional wedding photography - Couple in traditional attire", className: "" },
+    { src: "/assets/images/DSC_2190do.jpg", alt: "Event photography Lagos - Corporate event coverage", className: "" },
+    { src: "/assets/images/DSC_9639do.jpg", alt: "Portrait photography Lagos - Professional headshots", className: "" },
+    { src: "/assets/images/DSC_5116do.jpg", alt: "Wedding reception photography - Beautiful venue decoration", className: "" },
+    { src: "/assets/images/image-3.jpg", alt: "Outdoor wedding photography Nigeria - Garden wedding ceremony", className: "wide" },
+    { src: "/assets/images/DSC_5084do.jpg", alt: "Lagos wedding photographer - Romantic couple moments", className: "" },
+    { src: "/assets/images/DSC_6898.jpg", alt: "Family portrait photography - Group photo session", className: "" },
+    { src: "/assets/images/DSC_2500AA.jpg", alt: "Birthday event photography Lagos - Celebration moments", className: "" },
+    { src: "/assets/images/DSC_6955.jpg", alt: "Professional photography Lagos - Candid event shots", className: "" },
+    { src: "/assets/images/DSC_7884-copy2.jpg", alt: "Engagement photography Nigeria - Pre-wedding photoshoot", className: "tall" },
+    { src: "/assets/images/DSC_3996do.jpg", alt: "Commercial photography Lagos - Product and business photography", className: "" },
+    { src: "/assets/images/DSC_1945.jpg", alt: "Event videography Lagos - Professional video coverage", className: "" }
   ];
 
   // Structured Data for Homepage
@@ -178,7 +177,7 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
     "description": "Professional photography portfolio showcasing wedding, event, portrait and commercial photography work in Lagos, Nigeria",
     "image": galleryImages.map(img => ({
       "@type": "ImageObject",
-      "contentUrl": `https://www.aasphotography.com${img.src.replace('..', '')}`,
+      "contentUrl": `https://www.aasphotography.com${img.src}`,
       "description": img.alt
     }))
   };
@@ -188,35 +187,17 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
       <Helmet>
         {/* Primary Meta Tags */}
         <title>AAS Photography | Professional Wedding & Event Photographer in Lagos, Nigeria</title>
-        <meta 
-          name="title" 
-          content="AAS Photography | Professional Wedding & Event Photographer in Lagos, Nigeria" 
-        />
-        <meta 
-          name="description" 
-          content="Premier photography studio in Lagos specializing in wedding photography, event coverage, portraits & commercial photography. 10+ years experience. Book your session today! Free album with every booking." 
-        />
-        <meta 
-          name="keywords" 
-          content="photography Lagos, wedding photographer Nigeria, event photographer Lagos, portrait photography Nigeria, commercial photographer Lagos, professional photographer Lagos, wedding photography packages Lagos, Nigerian wedding photographer, Lagos event photography, best photographer Nigeria, photography services Lagos, photo album Lagos, wedding videography Lagos" 
-        />
+        <meta name="title" content="AAS Photography | Professional Wedding & Event Photographer in Lagos, Nigeria" />
+        <meta name="description" content="Premier photography studio in Lagos specializing in wedding photography, event coverage, portraits & commercial photography. 10+ years experience. Book your session today! Free album with every booking." />
+        <meta name="keywords" content="photography Lagos, wedding photographer Nigeria, event photographer Lagos, portrait photography Nigeria, commercial photographer Lagos, professional photographer Lagos, wedding photography packages Lagos, Nigerian wedding photographer, Lagos event photography, best photographer Nigeria, photography services Lagos, photo album Lagos, wedding videography Lagos" />
         <link rel="canonical" href="https://www.aasphotography.com" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.aasphotography.com" />
-        <meta 
-          property="og:title" 
-          content="AAS Photography | Best Wedding & Event Photographer in Lagos" 
-        />
-        <meta 
-          property="og:description" 
-          content="Capture life's precious moments with AAS Photography. Professional wedding, event & portrait photography in Lagos. Special offer: Free album with every booking!" 
-        />
-        <meta 
-          property="og:image" 
-          content="https://www.aasphotography.com/assets/images/aas-hero-image.jpg" 
-        />
+        <meta property="og:title" content="AAS Photography | Best Wedding & Event Photographer in Lagos" />
+        <meta property="og:description" content="Capture life's precious moments with AAS Photography. Professional wedding, event & portrait photography in Lagos. Special offer: Free album with every booking!" />
+        <meta property="og:image" content="https://www.aasphotography.com/assets/images/aas-hero-image.jpg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="AAS Photography - Professional photographer in Lagos, Nigeria" />
@@ -226,18 +207,9 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://www.aasphotography.com" />
-        <meta 
-          property="twitter:title" 
-          content="AAS Photography | Best Wedding & Event Photographer in Lagos" 
-        />
-        <meta 
-          property="twitter:description" 
-          content="Capture life's precious moments with AAS Photography. Professional wedding, event & portrait photography in Lagos. Free album with every booking!" 
-        />
-        <meta 
-          property="twitter:image" 
-          content="https://www.aasphotography.com/assets/images/aas-hero-image.jpg" 
-        />
+        <meta property="twitter:title" content="AAS Photography | Best Wedding & Event Photographer in Lagos" />
+        <meta property="twitter:description" content="Capture life's precious moments with AAS Photography. Professional wedding, event & portrait photography in Lagos. Free album with every booking!" />
+        <meta property="twitter:image" content="https://www.aasphotography.com/assets/images/aas-hero-image.jpg" />
 
         {/* Additional SEO Meta Tags */}
         <meta name="geo.region" content="NG-LA" />
@@ -250,22 +222,17 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
         <meta name="copyright" content="© 2025 AAS Photography. All rights reserved." />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
-        {/* Structured Data - Multiple schemas */}
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(breadcrumbData)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(imageGalleryData)}
-        </script>
+        {/* Structured Data */}
+        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbData)}</script>
+        <script type="application/ld+json">{JSON.stringify(imageGalleryData)}</script>
 
         {/* Preconnect for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </Helmet>
 
+      {/* Hero Section */}
       <div className="hero">
         <h2 className="hero-title-small">One stop-shop for the</h2>
         <h1 className="hero-title-large">Best Pictures</h1>
@@ -282,6 +249,7 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
         </button>
       </div>
 
+      {/* Our Services Section */}
       <section className="services-section">
         <h2 className="section-title">Our Services</h2>
         <div className="section-underline" role="presentation"></div>
@@ -305,7 +273,7 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
               <div className="hero-image">
                 <div className="image-container">
                   <img 
-                    src="./assets/images/aas-hero-image.jpg" 
+                    src="/assets/images/aas-hero-image.jpg" 
                     alt="Professional-photographer in Lagos showcasing premium album - AAS Photography"
                     loading="eager"
                     width="600"
@@ -317,6 +285,7 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
           </div>
         </div>
 
+        {/* Gallery Section */}
         <div className="gallery-grid" role="region" aria-label="Photography portfolio gallery">
           {galleryImages.map((image, index) => (
             <div key={index} className={`gallery-item ${image.className}`}>

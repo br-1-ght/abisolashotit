@@ -1,60 +1,27 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import './HomePage.css';
 
 const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
-  const imageObserverRef = useRef(null);
+  const [loadedImages, setLoadedImages] = useState(new Set());
 
-  useEffect(() => {
-    // Intersection Observer for lazy loading gallery images
-    imageObserverRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            const src = img.dataset.src;
-
-            if (src && !img.src) {
-              img.src = src;
-              img.onload = () => img.classList.add('fade-in'); // fade in after image loads
-              imageObserverRef.current.unobserve(img);
-            }
-          }
-        });
-      },
-      {
-        rootMargin: '50px',
-        threshold: 0.01
-      }
-    );
-
-    const images = document.querySelectorAll('.lazy-image');
-    images.forEach((img) => {
-      if (imageObserverRef.current) {
-        imageObserverRef.current.observe(img);
-      }
-    });
-
-    return () => {
-      if (imageObserverRef.current) {
-        imageObserverRef.current.disconnect();
-      }
-    };
-  }, []);
+  const handleImageLoad = (index) => {
+    setLoadedImages(prev => new Set([...prev, index]));
+  };
 
   const galleryImages = [
-    { src: "/assets/images/image-1.jpg", alt: "Professional wedding photography in Lagos - Elegant bride portrait", className: "tall" },
-    { src: "/assets/images/DSC_4365.jpg", alt: "Nigerian traditional wedding photography - Couple in traditional attire", className: "" },
-    { src: "/assets/images/DSC_2190do.jpg", alt: "Event photography Lagos - Corporate event coverage", className: "" },
-    { src: "/assets/images/DSC_9639do.jpg", alt: "Portrait photography Lagos - Professional headshots", className: "" },
-    { src: "/assets/images/DSC_5116do.jpg", alt: "Wedding reception photography - Beautiful venue decoration", className: "" },
-    { src: "/assets/images/image-3.jpg", alt: "Outdoor wedding photography Nigeria - Garden wedding ceremony", className: "wide" },
+    { src: "/assets/images/image-1.jpg", alt: "Professional wedding in Lagos - Elegant bride portrait", className: "tall" },
+    { src: "/assets/images/DSC_4365.jpg", alt: "Nigerian traditional wedding - Couple in traditional attire", className: "" },
+    { src: "/assets/images/DSC_2190do.jpg", alt: "Event coverage Lagos - Corporate event", className: "" },
+    { src: "/assets/images/DSC_9639do.jpg", alt: "Portrait session Lagos - Professional headshots", className: "" },
+    { src: "/assets/images/DSC_5116do.jpg", alt: "Wedding reception - Beautiful venue decoration", className: "" },
+    { src: "/assets/images/image-3.jpg", alt: "Outdoor wedding Nigeria - Garden wedding ceremony", className: "wide" },
     { src: "/assets/images/DSC_5084do.jpg", alt: "Lagos wedding photographer - Romantic couple moments", className: "" },
-    { src: "/assets/images/DSC_6898.jpg", alt: "Family portrait photography - Group photo session", className: "" },
-    { src: "/assets/images/DSC_2500AA.jpg", alt: "Birthday event photography Lagos - Celebration moments", className: "" },
-    { src: "/assets/images/DSC_6955.jpg", alt: "Professional photography Lagos - Candid event shots", className: "" },
-    { src: "/assets/images/DSC_7884-copy2.jpg", alt: "Engagement photography Nigeria - Pre-wedding photoshoot", className: "tall" },
-    { src: "/assets/images/DSC_3996do.jpg", alt: "Commercial photography Lagos - Product and business photography", className: "" },
+    { src: "/assets/images/DSC_6898.jpg", alt: "Family portrait session - Group session", className: "" },
+    { src: "/assets/images/DSC_2500AA.jpg", alt: "Birthday event Lagos - Celebration moments", className: "" },
+    { src: "/assets/images/DSC_6955.jpg", alt: "Professional coverage Lagos - Candid event shots", className: "" },
+    { src: "/assets/images/DSC_7884-copy2.jpg", alt: "Engagement shoot Nigeria - Pre-wedding photoshoot", className: "tall" },
+    { src: "/assets/images/DSC_3996do.jpg", alt: "Commercial shoot Lagos - Product and business", className: "" },
     { src: "/assets/images/DSC_1945.jpg", alt: "Event videography Lagos - Professional video coverage", className: "" }
   ];
 
@@ -174,7 +141,7 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
     "@context": "https://schema.org",
     "@type": "ImageGallery",
     "name": "AAS Photography Portfolio",
-    "description": "Professional photography portfolio showcasing wedding, event, portrait and commercial photography work in Lagos, Nigeria",
+    "description": "Professional portfolio showcasing wedding, event, portrait and commercial work in Lagos, Nigeria",
     "image": galleryImages.map(img => ({
       "@type": "ImageObject",
       "contentUrl": `https://www.aasphotography.com${img.src}`,
@@ -274,7 +241,7 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
                 <div className="image-container">
                   <img 
                     src="/assets/images/aas-hero-image.jpg" 
-                    alt="Professional-photographer in Lagos showcasing premium album - AAS Photography"
+                    alt="Professional photographer in Lagos showcasing premium album - AAS Photography"
                     loading="eager"
                     width="600"
                     height="400"
@@ -286,19 +253,24 @@ const HomePage = ({ setShowBookingForm, setCurrentPage }) => {
         </div>
 
         {/* Gallery Section */}
-        <div className="gallery-grid" role="region" aria-label="Photography portfolio gallery">
+        <div className="gallery-grid" role="region" aria-label="Portfolio gallery">
           {galleryImages.map((image, index) => (
             <div key={index} className={`gallery-item ${image.className}`}>
               <img 
-                className="lazy-image"
-                data-src={image.src}
+                src={image.src}
                 alt={image.alt}
                 loading="lazy"
-                style={{ opacity: 0 }}
                 width="400"
                 height="400"
+                onLoad={() => handleImageLoad(index)}
+                className={loadedImages.has(index) ? 'fade-in' : ''}
+                style={{ 
+                  opacity: loadedImages.has(index) ? 1 : 0 
+                }}
               />
-              <div className="image-placeholder" aria-hidden="true"></div>
+              {!loadedImages.has(index) && (
+                <div className="image-placeholder" aria-hidden="true"></div>
+              )}
             </div>
           ))}
         </div>

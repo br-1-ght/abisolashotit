@@ -183,11 +183,60 @@
   position: relative;
 }
 
+/* Image placeholder with shimmer effect */
+.image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 .gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+/* Fade-in animation for loaded images */
+.gallery-item img.fade-in {
+  animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hide placeholder when image is loaded */
+.gallery-item img[src]:not([src=""]) ~ .image-placeholder {
+  display: none;
 }
 
 .gallery-item:hover img {
@@ -200,6 +249,14 @@
 
 .gallery-item.wide {
   grid-column: span 2;
+}
+
+/* Optimize image rendering */
+.gallery-item img,
+.image-container img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  will-change: transform;
 }
 
 /* Responsive Design */
